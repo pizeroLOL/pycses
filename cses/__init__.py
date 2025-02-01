@@ -65,22 +65,22 @@ class Class:
 
 
 Weekday = Literal["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-weekday_items = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+WEEKDAY_ITEMS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
 WeekType = Literal["all", "odd", "even"]
-week_types = ["all", "odd", "even"]
+WEEK_TYPES = ["all", "odd", "even"]
 
 
 def try_into_enable_day(item: str) -> Weekday:
     """将字符串转换到星期"""
-    if item not in weekday_items:
-        raise ValueError(f"enable_day 不可为 {item}，应为 {weekday_items}")
+    if item not in WEEKDAY_ITEMS:
+        raise ValueError(f"enable_day 不可为 {item}，应为 {WEEKDAY_ITEMS}")
     return item  # type: ignore
 
 
 def try_into_weeks(item: str) -> WeekType:
     """将字符串转换到周类型"""
-    if item not in week_types:
-        raise ValueError(f"weeks 不可为 {item}，应为 {weekday_items}")
+    if item not in WEEK_TYPES:
+        raise ValueError(f"weeks 不可为 {item}，应为 {WEEKDAY_ITEMS}")
     return item  # type: ignore
 
 
