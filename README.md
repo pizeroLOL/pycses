@@ -8,8 +8,6 @@ CSES Access Framework for Python
 
 #### [Main Repo](https://github.com/CSES-org/CSES)
 
-**English** | [**中文简体**](./docs/cn/README.md)
-
 </div>
 
 ## Introduction
@@ -72,9 +70,5 @@ generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
 # Save the file
 generator.save_to_file("path/to/file.cses.yaml")
 ```
-
-## License
-
-[MIT](./LICENSE)
 
 
