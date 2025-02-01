@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pycses',
-    version='0.1',
+    version='0.1.2',
     author='unDefFtr',
     author_email='undefftr@undefined.ac.cn',
     description='CSES access framework for Python',
