@@ -64,13 +64,13 @@ class Class:
         }
 
 
-Weekday = Literal["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-WEEKDAY_ITEMS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+Weekday = Literal[1, 2, 3, 4, 5, 6, 7]
+WEEKDAY_ITEMS = [1, 2, 3, 4, 5, 6, 7]
 WeekType = Literal["all", "odd", "even"]
 WEEK_TYPES = ["all", "odd", "even"]
 
 
-def try_into_enable_day(item: str) -> Weekday:
+def try_into_enable_day(item: int) -> Weekday:
     """将字符串转换到星期"""
     if item not in WEEKDAY_ITEMS:
         raise ValueError(f"enable_day 不可为 {item}，应为 {WEEKDAY_ITEMS}")
@@ -98,7 +98,7 @@ class Schedule:
         """从字典导入"""
         return Schedule(
             name=str(item["name"]),
-            enable_day=try_into_enable_day(str(item["enable_day"])),
+            enable_day=try_into_enable_day(int(item["enable_day"])),
             weeks=try_into_weeks(str(item["weeks"])),
             classes=list(
                 Class.from_dict(dict(raw_class))
