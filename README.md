@@ -57,13 +57,13 @@ generator.add_subject(name="Math", simplified_name="M", teacher="Mr. Wang", room
 generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
     {
         "subject": "Math",
-        "start_time": "08:00",
-        "end_time": "09:00"
+        "start_time": "08:00:00",
+        "end_time": "09:00:00"
     },
     {
         "subject": "Biology",
-        "start_time": "09:00",
-        "end_time": "10:00"
+        "start_time": "09:00:00",
+        "end_time": "10:00:00"
     }
 ])
 
