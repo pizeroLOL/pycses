@@ -1,22 +1,24 @@
-<div align="center">
+.. image:: https://static.smart-teach.cn/logos/full.jpg
+   :height: 64
 
-<image src="https://static.smart-teach.cn/logos/full.jpg" height="64"/>
+PyCSES
+======
 
-# PyCSES
+一个用于解析与生成 CSES 格式的 Python 库，提供简单易用的 API。  
+详细示例请见 [cses/__init__.py](cses/__init__.py)。
 
-CSES Access Framework for Python
+安装
+----
 
-#### [Main Repo](https://github.com/SmartTeachCN/pycses)
+.. code-block:: console
 
-</div>
+   pip install pycses
 
-## Introduction
+使用示例
+--------
 
-PyCSES is a Python library that provides access to the CSES format. It is designed to be simple and easy to use.
+.. code-block:: python
 
-## Functions
-
-```python
 import cses
 
 # Read a CSES file
@@ -69,6 +71,9 @@ generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
 
 # Save the file
 generator.save_to_file("path/to/file.cses.yaml")
-```
+   ...
 
+更多信息
+--------
 
+请参阅 [README.md](README.md) 或 [LICENSE](LICENSE) 获取更多说明。

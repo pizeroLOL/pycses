@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 setup(
     name='pycses',
     version='0.1.2',
-    author='unDefFtr',
-    author_email='undefftr@undefined.ac.cn',
+    author='SmartTeachCN',
+    author_email='contact@smart-teach.cn',
     description='CSES access framework for Python',
     long_description=open('README.md', encoding="utf-8").read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/CSES-org/pycses',
+    url='https://github.com/SmartTeachCN/pycses',
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
