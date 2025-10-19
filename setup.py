@@ -18,5 +18,6 @@ setup(
     python_requires='>=3.9',
     install_requires=[
         'PyYAML>=5.4.1',
+        'pydantic~=2.12.3',
     ],
 )

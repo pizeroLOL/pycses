@@ -1,21 +1,19 @@
 import yaml
-from pathlib import Path
-from collections import OrderedDict
 
-# 解析器
+
 class CSESParser:
-    def __init__(self, file_path):
+    def __init__(self, fp):
         """
-        初始化 CSES 解析器
-        
+        初始化 CSES 解析器。
+
         Args:
-            file_path (str): CSES 格式的 YAML 文件路径
+            fp (str): CSES 格式的 YAML 文件路径
         """
-        self.file_path  = file_path
+        self.file_path  = fp
         self.data  = None
         self.version  = None
-        self.subjects  = []
-        self.schedules  = []
+        self.subjects = []
+        self.schedules = []
         
         self._load_file()
         self._parse_data()
@@ -24,7 +22,8 @@ class CSESParser:
         """加载并解析 YAML 文件"""
         try:
             with open(self.file_path,  'r', encoding='utf-8') as f:
-                self.data  = yaml.safe_load(f) 
+                self.data  = yaml.safe_load(f)
+                print(self.data)
         except FileNotFoundError:
             raise FileNotFoundError(f"File {self.file_path} Not Found")
         except yaml.YAMLError as e:
@@ -70,14 +69,6 @@ class CSESParser:
                 schedule_info['classes'].append(class_info)
             
             self.schedules.append(schedule_info) 
-    
-    def get_subjects(self):
-        """获取所有科目信息"""
-        return self.subjects 
-    
-    def get_schedules(self):
-        """获取所有课程安排"""
-        return self.schedules 
     
     def get_schedule_by_day(self, day):
         """
@@ -192,6 +183,7 @@ class CSESGenerator:
                 yaml.dump(cses_data,  f, default_flow_style=False, allow_unicode=True, sort_keys=False)
         except IOError as e:
             raise IOError(f"Failed to write {file_path}: {e}")
+
 
 # 示例用法
 if __name__ == "__main__":
