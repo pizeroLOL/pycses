@@ -9,7 +9,7 @@
    :caption: 目录
 
    Home <self>
-   README
+   ../README
    main
    structs
    utils
