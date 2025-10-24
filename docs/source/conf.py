@@ -15,10 +15,16 @@ author = 'MacrosMeng'
 
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../'))
 
-extensions = ['sphinx.ext.napoleon',
-              'sphinx.ext.autodoc']
+extensions = [
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    # 'sphinx-copybutton',
+    # 'sphinx-tabs',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
