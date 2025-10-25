@@ -1,5 +1,5 @@
 主要用法
 ========
 
-.. automodule:: cses.main
+.. automodule:: cses
     :members:
