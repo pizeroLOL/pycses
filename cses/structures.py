@@ -1,3 +1,9 @@
+"""
+本文档是cses包中的structures.py文件的文档。
+该文件定义了课程相关的数据结构，包括科目、课程、周次类型和单日课程安排。
+
+.. warning:: 该模块中的数据结构仅用于表示课程结构（与其附属工具），不包含实际的读取/写入功能。
+"""
 import datetime
 from enum import Enum
 
@@ -130,14 +136,14 @@ class SingleDaySchedule(BaseModel):
             bool: 如果课程在指定日期上启用，则返回 True；否则返回 False
 
         Examples:
-            # >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
-            #                           simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
-            #                           end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD)
-            # >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 4))
-            # True
-            # >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 16))
-            # True
-            # >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 24))
-            # False
+            >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
+                                      simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
+                                      end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD)
+            >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 4))
+            True
+            >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 16))
+            True
+            >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 24))
+            False
         """
         return self.is_enabled_on_week(utils.week_num(start_day, day))
