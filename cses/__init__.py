@@ -15,6 +15,17 @@ class CSES:
         - ``schedule``: 课程安排列表，每个元素是一个 ``SingleDaySchedule`` 对象。
         - ``version``: 课程文件的版本号。目前只能为`` 1 ``。
         - ``subjects``: 科目列表，每个元素是一个 ``Subject`` 对象。
+
+    Examples:
+        >>> c = CSES(open('../cses_example.yaml', encoding='utf8').read())
+        >>> c.version  # 只会为 1
+        1
+        >>> c.subjects  # doctest: +NORMALIZE_WHITESPACE
+        {'数学': Subject(name='数学', simplified_name='数', teacher='李梅', room='101'),
+         '语文': Subject(name='语文', simplified_name='语', teacher='王芳', room='102'),
+         '英语': Subject(name='英语', simplified_name='英', teacher='张伟', room='103'),
+         '物理': Subject(name='物理', simplified_name='物', teacher='赵军', room='104')}
+
     """
 
     def __init__(self, content: str):
@@ -26,6 +37,7 @@ class CSES:
         """
         self.schedule = None
         self.version = None
+        self.subjects = None
 
         self._load(content)
 
@@ -71,8 +83,6 @@ class CSES:
                 )
                 for day in schedules
             ]
-
-            print("!!!\n", self.schedule)
         except st.ValidationError as e:
             raise err.ParseError(f'课程数据有误: {data['schedules']}') from e
 
