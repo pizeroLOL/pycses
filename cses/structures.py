@@ -23,19 +23,23 @@ class Subject(BaseModel):
         name (str): 科目名称，如“语文”
         simplified_name (str): 科目简化名称，如“语”
         teacher (str): 教师姓名
+        room (str): 教室名称
 
     Examples:
-        >>> s = Subject(name='语文', simplified_name='语', teacher='张三')
+        >>> s = Subject(name='语文', simplified_name='语', teacher='张三', room='A101')
         >>> s.name
         '语文'
         >>> s.simplified_name
         '语'
         >>> s.teacher
         '张三'
+        >>> s.room
+        'A101'
     """
     name: str
-    simplified_name: str
-    teacher: str
+    simplified_name: str = ""
+    teacher: str = ""
+    room: str = ""
 
 
 class Lesson(BaseModel):
@@ -158,8 +162,8 @@ class Schedule(UserList[SingleDaySchedule]):
 
     .. caution::
         在访问一个Schedule中的项目时，注意索引从 1 开始，而不是从 0 开始。
-        这是为了可以按照星期访问课表，而不是按照 Python 的逻辑，所以访问星期一的课表使用``schedule[1]``而不是``schedule[0]``。
-        若你想要以 Python 的逻辑访问课表，请使用``data``属性，如访问星期一的课表需要使用``schedule.data[0]``。
+        这是为了可以按照星期访问课表，而不是按照 Python 的逻辑，所以访问星期一的课表使用 ``schedule[1]`` 而不是 ``schedule[0]`` 。
+        若你想要以 Python 的逻辑访问课表，请使用 ``data`` 属性，如访问星期一的课表需要使用 ``schedule.data[0]`` 。
 
     Examples:
         >>> s = Schedule([
