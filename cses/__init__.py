@@ -1,6 +1,4 @@
-"""
-使用 ``CSES`` 类可以表示、解析一个 CSES 课程文件。
-"""
+"""使用 ``CSES`` 类可以表示、解析一个 CSES 课程文件。"""
 import yaml
 
 import cses.structures as st
@@ -13,7 +11,7 @@ class CSES:
 
     该类有如下属性：
         - ``schedule``: 课程安排列表，每个元素是一个 ``SingleDaySchedule`` 对象。
-        - ``version``: 课程文件的版本号。目前只能为`` 1 ``。
+        - ``version``: 课程文件的版本号。目前只能为 ``1`` ，参见 CSES 官方文档与 Schema 文件。
         - ``subjects``: 科目列表，每个元素是一个 ``Subject`` 对象。
 
     Examples:
