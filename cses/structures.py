@@ -6,6 +6,9 @@
 """
 import datetime
 from enum import Enum
+from collections import UserList
+from collections.abc import Sequence
+from typing import override
 
 from pydantic import BaseModel
 
@@ -147,3 +150,33 @@ class SingleDaySchedule(BaseModel):
             False
         """
         return self.is_enabled_on_week(utils.week_num(start_day, day))
+
+
+class Schedule(UserList[SingleDaySchedule]):
+    """
+    存储每天课程安排的列表。列表会被排序
+
+    .. caution::
+        此列表在访问其中的项目时，索引从 1 开始，而不是从 0 开始。
+        这是为了可以按照星期访问课表，而不是按照 Python 的逻辑，所以访问星期一的课表使用``schedule[1]``而不是``schedule[0]``。
+        若你想要以 Python 的逻辑访问课表，请使用``data``属性，如访问星期一的课表需要使用``schedule.data[0]``。
+
+    Examples:
+        >>> s = Schedule([
+        ...     SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文',
+        ...                       simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0),
+        ...                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD),
+        ...     SingleDaySchedule(enable_day=2, classes=[Lesson(subject=Subject(name='数学',
+        ...                       simplified_name='数', teacher='李四'), start_time=datetime.time(9, 0, 0),
+        ...                       end_time=datetime.time(9, 45, 0))], name='星期二', weeks=WeekType.EVEN)
+        ... ])
+        >>> s[1].enable_day
+        1
+    """
+    def __init__(self, args: Sequence[SingleDaySchedule]):
+        result = sorted(args, key=lambda arg: arg.enable_day)  # 按照启用日期（星期几）排序
+        super().__init__(result)
+
+    @override
+    def __getitem__(self, index: int) -> SingleDaySchedule:
+        return self.data[index - 1]
