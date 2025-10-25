@@ -25,5 +25,5 @@ cseslib4py 文档
    Home <self>
    main_usage
    structs
-   errs
+   err
    utils

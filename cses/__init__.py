@@ -10,6 +10,11 @@ import cses.errors as err
 class CSES:
     """
     用来表示、解析一个 CSES 课程文件的类。
+
+    该类有如下属性：
+        - ``schedule``: 课程安排列表，每个元素是一个 ``SingleDaySchedule`` 对象。
+        - ``version``: 课程文件的版本号。目前只能为`` 1 ``。
+        - ``subjects``: 科目列表，每个元素是一个 ``Subject`` 对象。
     """
 
     def __init__(self, content: str):
