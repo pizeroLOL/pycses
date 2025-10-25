@@ -10,7 +10,7 @@ from collections import UserList
 from collections.abc import Sequence
 from typing import override
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 import cses.utils as utils
 
