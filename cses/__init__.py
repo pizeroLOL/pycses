@@ -1,8 +1,15 @@
 """使用 ``CSES`` 类可以表示、解析一个 CSES 课程文件。"""
+import datetime
+
 import yaml
 
 import cses.structures as st
 import cses.errors as err
+from cses.utils import log, repr_
+from cses import utils
+
+
+yaml.add_representer(datetime.time, utils.serialize_time)
 
 
 class CSES:
@@ -10,7 +17,7 @@ class CSES:
     用来表示、解析一个 CSES 课程文件的类。
 
     该类有如下属性：
-        - ``schedule``: 课程安排列表，每个元素是一个 ``SingleDaySchedule`` 对象。
+        - ``schedules``: 课程安排列表，每个元素是一个 ``SingleDaySchedule`` 对象。
         - ``version``: 课程文件的版本号。目前只能为 ``1`` ，参见 CSES 官方文档与 Schema 文件。
         - ``subjects``: 科目列表，每个元素是一个 ``Subject`` 对象。
 
@@ -28,13 +35,13 @@ class CSES:
 
     def __init__(self):
         """
-        新建一个空CSES课表。
+        初始化一个空CSES课表。
 
         .. warning:: 不应该直接调用 ``CSES()`` 构造函数， 而是应该使用 ``CSES.from_str()`` 工厂方法。
         """
-        self.schedule = None
-        self.version = None
-        self.subjects = None
+        self.version = 1
+        self.subjects = {}
+        self.schedules = []
 
     @classmethod
     def from_str(cls, content: str) -> 'CSES':
@@ -44,22 +51,27 @@ class CSES:
         Args:
             content (str): CSES 课程文件的内容。
         """
+
         data = yaml.safe_load(content)
         new_schedule = cls()
+        log.info(f"Loading CSES schedules {repr_(content)}")
 
         # 版本处理&检查
+        log.debug(f"Checking version: {data['version']}")
         new_schedule.version = data['version']
         if new_schedule.version != 1:
             raise err.VersionError(f'不支持的版本号: {new_schedule.version}')
 
         # 科目处理&检查
         try:
+            log.debug(f"Processing subjects: {repr_(data['subjects'])}")
             new_schedule.subjects = {s['name']: st.Subject(**s) for s in data['subjects']}
         except st.ValidationError as e:
             raise err.ParseError(f'科目数据有误: {data['subjects']}') from e
 
         # 课程处理&检查
         schedules = data['schedules']
+        log.debug(f"Processing schedules: {repr_(schedules)}")
         try:
             # 先构造课程列表，再构造课表
             schedule_classes = {i['name']: i['classes'] for i in schedules}
@@ -68,21 +80,24 @@ class CSES:
                 for lesson in classes:
                     built_lessons[name].append(
                         st.Lesson(**(lesson | {'subject': new_schedule.subjects[lesson['subject']]}))
-                    )  # 从self.subjects中获取合法的Subject对象
+                    )
+            log.debug(f"Built lessons: {repr_(built_lessons)}")
 
             # 从构造好的课程列表中构造课表
-            new_schedule.schedule = [
+            new_schedule.schedules = st.Schedule([
                 st.SingleDaySchedule(
                     enable_day=day['enable_day'],
                     classes=built_lessons[day['name']],
                     name=day['name'],
-                    weeks=st.WeekType(day['weeks']),
+                    weeks=day['weeks'],
                 )
                 for day in schedules
-            ]
+            ])
+            log.debug(f"Built schedules: {repr_(new_schedule.schedules)}")
         except st.ValidationError as e:
             raise err.ParseError(f'课程数据有误: {data['schedules']}') from e
 
+        log.info(f"Created Schedule: {repr_(new_schedule)}")
         return new_schedule
 
     @classmethod
@@ -95,3 +110,30 @@ class CSES:
         """
         with open(fp, encoding='utf8') as f:
             return CSES.from_str(f.read())
+
+    def to_yaml(self) -> str:
+        """
+        将当前 CSES 课表对象转换为 YAML 字符串。
+
+        Returns:
+            str: 当前 CSES 课表对象的 YAML 字符串表示。
+        """
+        return yaml.dump(self._gen_dict(),
+                         default_flow_style=False,
+                         sort_keys=True,
+                         allow_unicode=True,
+                         indent=2)
+
+    def _gen_dict(self) -> dict:
+        """
+        生成当前 CSES 课表对象的字典表示。
+
+        Returns:
+            dict: 当前 CSES 课表对象的字典表示。
+        """
+        # TODO: 输出时对Lesson.subject进行处理，只输出name
+        return {
+            'version': self.version,
+            'subjects': [subject.model_dump() for subject in self.subjects.values()],
+            'schedules': [schedule.model_dump() for schedule in self.schedules],
+        }

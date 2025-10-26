@@ -5,7 +5,6 @@
 .. caution:: 该模块中的数据结构仅用于表示课程结构（与其附属工具），不包含实际的读取/写入功能。
 """
 import datetime
-from enum import Enum
 from collections import UserList
 from collections.abc import Sequence
 from typing import override, Optional, Literal, Annotated
@@ -66,18 +65,6 @@ class Lesson(BaseModel):
     end_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
 
 
-class WeekType(Enum):
-    """
-    周次类型。
-    ALL: 适用于所有周
-    ODD: 仅适用于单周
-    EVEN: 仅适用于双周
-    """
-    ALL = "all"
-    ODD = "odd"
-    EVEN = "even"
-
-
 class SingleDaySchedule(BaseModel):
     """
     单日课程安排。
@@ -91,18 +78,18 @@ class SingleDaySchedule(BaseModel):
     Examples:
         >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
                                   simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
-                                  end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ALL)
+                                  end_time=datetime.time(8, 45, 0))], name='星期一', weeks='all')
         >>> s.enable_day
         1
         >>> s.name
         '星期一'
         >>> s.weeks
-        <WeekType.ALL: 'all'>
+        'all'
     """
     enable_day: Literal[1, 2, 3, 4, 5, 6, 7]
     classes: list[Lesson]
     name: str
-    weeks: WeekType
+    weeks: Literal['all', 'odd', 'even']
 
     def is_enabled_on_week(self, week: int) -> bool:
         """
@@ -117,7 +104,7 @@ class SingleDaySchedule(BaseModel):
         Examples:
             >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
                                       simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
-                                      end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD)
+                                      end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd')
             >>> s.is_enabled_on_week(3)
             True
             >>> s.is_enabled_on_week(6)
@@ -126,9 +113,9 @@ class SingleDaySchedule(BaseModel):
             True
         """
         return {
-            WeekType.ALL: True,  # 适用于所有周 -> 永久启用
-            WeekType.ODD: week % 2 == 1,  # 单周
-            WeekType.EVEN: week % 2 == 0  # 双周
+            'all': True,  # 适用于所有周 -> 永久启用
+            'odd': week % 2 == 1,  # 单周
+            'even': week % 2 == 0  # 双周
         }[self.weeks]
 
     def is_enabled_on_day(self, start_day: datetime.date, day: datetime.date) -> bool:
@@ -145,7 +132,7 @@ class SingleDaySchedule(BaseModel):
         Examples:
             >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
                                       simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
-                                      end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD)
+                                      end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd')
             >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 4))
             True
             >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 16))
@@ -161,7 +148,7 @@ class Schedule(UserList[SingleDaySchedule]):
     存储每天课程安排的列表。列表会按照星期排序。
 
     .. caution::
-        在访问一个Schedule中的项目时，注意索引从 1 开始，而不是从 0 开始。
+        在访问一个 ``Schedule`` 中的项目时，注意索引从 1 开始，而不是从 0 开始。
         这是为了可以按照星期访问课表，而不是按照 Python 的逻辑，所以访问星期一的课表使用 ``schedule[1]`` 而不是 ``schedule[0]`` 。
         若你想要以 Python 的逻辑访问课表，请使用 ``data`` 属性，如访问星期一的课表需要使用 ``schedule.data[0]`` 。
 
@@ -169,10 +156,10 @@ class Schedule(UserList[SingleDaySchedule]):
         >>> s = Schedule([
         ...     SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文',
         ...                       simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0),
-        ...                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks=WeekType.ODD),
+        ...                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd'),
         ...     SingleDaySchedule(enable_day=2, classes=[Lesson(subject=Subject(name='数学',
         ...                       simplified_name='数', teacher='李四'), start_time=datetime.time(9, 0, 0),
-        ...                       end_time=datetime.time(9, 45, 0))], name='星期二', weeks=WeekType.EVEN)
+        ...                       end_time=datetime.time(9, 45, 0))], name='星期二', weeks='even')
         ... ])
         >>> s[1].enable_day
         1
