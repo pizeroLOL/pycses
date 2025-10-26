@@ -53,7 +53,7 @@ class Lesson(BaseModel):
 
     Examples:
         >>> l = Lesson(subject=Subject(name='语文', simplified_name='语', teacher='张三'), \
-                       start_time=datetime.time(8, 0, 0), end_time=datetime.time(8, 45, 0))
+                       start_time="08:00:00", end_time="08:45:00")
         >>> l.subject.name
         '语文'
         >>> l.start_time

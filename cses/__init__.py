@@ -15,7 +15,7 @@ class CSES:
         - ``subjects``: 科目列表，每个元素是一个 ``Subject`` 对象。
 
     Examples:
-        >>> c = CSES(open('../cses_example.yaml', encoding='utf8').read())
+        >>> c = CSES.from_file('../cses_example.yaml')
         >>> c.version  # 只会为 1
         1
         >>> c.subjects  # doctest: +NORMALIZE_WHITESPACE
@@ -26,36 +26,35 @@ class CSES:
 
     """
 
-    def __init__(self, content: str):
+    def __init__(self):
         """
-        初始化 CSES。
+        新建一个空CSES课表。
 
-        Args:
-            content (str): CSES 课程文件的内容。
+        .. warning:: 不应该直接调用 ``CSES()`` 构造函数， 而是应该使用 ``CSES.from_str()`` 工厂方法。
         """
         self.schedule = None
         self.version = None
         self.subjects = None
 
-        self._load(content)
-
-    def _load(self, content: str):
+    @classmethod
+    def from_str(cls, content: str) -> 'CSES':
         """
-        从 ``content`` 加载 CSES 课程文件的内容。
+        从 ``content`` 新建一个 CSES 课表对象。
 
         Args:
             content (str): CSES 课程文件的内容。
         """
         data = yaml.safe_load(content)
+        new_schedule = cls()
 
         # 版本处理&检查
-        self.version = data['version']
-        if self.version != 1:
-            raise err.VersionError(f'不支持的版本号: {self.version}')
+        new_schedule.version = data['version']
+        if new_schedule.version != 1:
+            raise err.VersionError(f'不支持的版本号: {new_schedule.version}')
 
         # 科目处理&检查
         try:
-            self.subjects = {s['name']: st.Subject(**s) for s in data['subjects']}
+            new_schedule.subjects = {s['name']: st.Subject(**s) for s in data['subjects']}
         except st.ValidationError as e:
             raise err.ParseError(f'科目数据有误: {data['subjects']}') from e
 
@@ -68,11 +67,11 @@ class CSES:
             for name, classes in schedule_classes.items():
                 for lesson in classes:
                     built_lessons[name].append(
-                        st.Lesson(**(lesson | {'subject': self.subjects[lesson['subject']]}))
+                        st.Lesson(**(lesson | {'subject': new_schedule.subjects[lesson['subject']]}))
                     )  # 从self.subjects中获取合法的Subject对象
 
             # 从构造好的课程列表中构造课表
-            self.schedule = [
+            new_schedule.schedule = [
                 st.SingleDaySchedule(
                     enable_day=day['enable_day'],
                     classes=built_lessons[day['name']],
@@ -84,3 +83,15 @@ class CSES:
         except st.ValidationError as e:
             raise err.ParseError(f'课程数据有误: {data['schedules']}') from e
 
+        return new_schedule
+
+    @classmethod
+    def from_file(cls, fp: str) -> 'CSES':
+        """
+        从路径 ``fp`` 中读取并新建一个 CSES 课表对象。
+
+        Args:
+            fp (str): CSES 课程文件的路径。
+        """
+        with open(fp, encoding='utf8') as f:
+            return CSES.from_str(f.read())
