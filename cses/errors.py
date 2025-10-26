@@ -11,4 +11,3 @@ class ParseError(CSESError):
 
 class VersionError(CSESError):
     """解析 CSES 课程文件时，版本号错误抛出的异常。"""
-
