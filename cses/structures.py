@@ -8,9 +8,9 @@ import datetime
 from enum import Enum
 from collections import UserList
 from collections.abc import Sequence
-from typing import override
+from typing import override, Optional, Literal, Annotated
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, BeforeValidator
 
 import cses.utils as utils
 
@@ -37,9 +37,9 @@ class Subject(BaseModel):
         'A101'
     """
     name: str
-    simplified_name: str = ""
-    teacher: str = ""
-    room: str = ""
+    simplified_name: Optional[str] = None
+    teacher: Optional[str] = None
+    room: Optional[str] = None
 
 
 class Lesson(BaseModel):
@@ -62,8 +62,8 @@ class Lesson(BaseModel):
         datetime.time(8, 45)
     """
     subject: Subject
-    start_time: datetime.time
-    end_time: datetime.time
+    start_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
+    end_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
 
 
 class WeekType(Enum):
@@ -99,7 +99,7 @@ class SingleDaySchedule(BaseModel):
         >>> s.weeks
         <WeekType.ALL: 'all'>
     """
-    enable_day: int
+    enable_day: Literal[1, 2, 3, 4, 5, 6, 7]
     classes: list[Lesson]
     name: str
     weeks: WeekType
