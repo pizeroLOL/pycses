@@ -10,6 +10,7 @@ from cses import utils
 
 
 yaml.add_representer(datetime.time, utils.serialize_time)
+log.info("cseslib4py initialized!")
 
 
 class CSES:
@@ -120,9 +121,10 @@ class CSES:
         """
         return yaml.dump(self._gen_dict(),
                          default_flow_style=False,
-                         sort_keys=True,
+                         sort_keys=False,
                          allow_unicode=True,
-                         indent=2)
+                         indent=2,
+                         Dumper=utils.NoAliasDumper)
 
     def _gen_dict(self) -> dict:
         """

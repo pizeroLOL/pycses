@@ -9,7 +9,7 @@ from collections import UserList
 from collections.abc import Sequence
 from typing import override, Optional, Literal, Annotated
 
-from pydantic import BaseModel, ValidationError, BeforeValidator
+from pydantic import BaseModel, ValidationError, BeforeValidator, field_serializer
 
 import cses.utils as utils
 
@@ -47,8 +47,8 @@ class Lesson(BaseModel):
 
     Args:
         subject (Subject): 课程的科目
-        start_time (datetime.time): 开始的时间
-        end_time (datetime.time): 结束的时间
+        start_time (str | int | datetime.time): 开始的时间（若输入为 ``str`` 或 ``int`` ，则会转化为datetime.time对象）
+        end_time (str | int | datetime.time): 结束的时间（若输入为 ``str`` 或 ``int`` ，则会转化为datetime.time对象）
 
     Examples:
         >>> l = Lesson(subject=Subject(name='语文', simplified_name='语', teacher='张三'), \
@@ -63,6 +63,10 @@ class Lesson(BaseModel):
     subject: Subject
     start_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
     end_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
+
+    @field_serializer("start_time", "end_time")
+    def serialize_time(self, time: datetime.time) -> str:
+        return time.strftime("%H:%M:%S")
 
 
 class SingleDaySchedule(BaseModel):
