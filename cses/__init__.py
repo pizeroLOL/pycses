@@ -1,5 +1,6 @@
 """使用 ``CSES`` 类可以表示、解析一个 CSES 课程文件。"""
 import datetime
+import os
 
 import yaml
 
@@ -7,7 +8,6 @@ import cses.structures as st
 import cses.errors as err
 from cses.utils import log, repr_
 from cses import utils
-
 
 yaml.add_representer(datetime.time, utils.serialize_time)
 log.info("cseslib4py initialized!")
@@ -80,7 +80,7 @@ class CSES:
             for name, classes in schedule_classes.items():
                 for lesson in classes:
                     built_lessons[name].append(
-                        st.Lesson(**(lesson | {'subject': new_schedule.subjects[lesson['subject']]}))
+                        st.Lesson(**lesson)
                     )
             log.debug(f"Built lessons: {repr_(built_lessons)}")
 
@@ -119,12 +119,27 @@ class CSES:
         Returns:
             str: 当前 CSES 课表对象的 YAML 字符串表示。
         """
-        return yaml.dump(self._gen_dict(),
-                         default_flow_style=False,
-                         sort_keys=False,
-                         allow_unicode=True,
-                         indent=2,
-                         Dumper=utils.NoAliasDumper)
+        res = yaml.dump(self._gen_dict(),
+                        default_flow_style=False,
+                        sort_keys=False,
+                        allow_unicode=True,
+                        indent=2,
+                        Dumper=utils.NoAliasDumper)
+        log.debug(f"Generated YAML: {repr_(res)}")
+        return res
+
+    def to_file(self, fp: str, mode: str = 'w'):
+        """
+        将当前 CSES 课表对象转换为 YAML CSES 课程CSES入路径 ``fp`` 中。若文件夹/文件不存在，则会自动创建。
+
+        Args:
+            fp (str): 要写入的文件路径。
+            mode (str, optional): 写入模式，默认值为 ``'w'`` ，即覆盖写入。
+        """
+        os.makedirs(os.path.dirname(fp), exist_ok=True)
+        with open(fp, mode, encoding='utf8') as f:
+            f.write(self.to_yaml())
+        log.info(f"Written CSES schedule file to {repr_(fp)}.")
 
     def _gen_dict(self) -> dict:
         """
@@ -133,9 +148,14 @@ class CSES:
         Returns:
             dict: 当前 CSES 课表对象的字典表示。
         """
-        # TODO: 输出时对Lesson.subject进行处理，只输出name
         return {
             'version': self.version,
             'subjects': [subject.model_dump() for subject in self.subjects.values()],
             'schedules': [schedule.model_dump() for schedule in self.schedules],
         }
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self._gen_dict() == other._gen_dict()
+        else:
+            return NotImplemented

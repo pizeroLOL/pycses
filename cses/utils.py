@@ -103,3 +103,7 @@ class NoAliasDumper(yaml.Dumper):
     """
     def ignore_aliases(self, data):
         return True
+
+    def increase_indent(self, flow=False, indentless=False):
+        # 确保列表项使用两个空格缩进
+        return super().increase_indent(flow, False)

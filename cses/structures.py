@@ -46,21 +46,23 @@ class Lesson(BaseModel):
     单节课程。
 
     Args:
-        subject (Subject): 课程的科目
+        subject (str): 课程的科目，应与 ``Subject`` 中之一的 ``name`` 属性相同
         start_time (str | int | datetime.time): 开始的时间（若输入为 ``str`` 或 ``int`` ，则会转化为datetime.time对象）
         end_time (str | int | datetime.time): 结束的时间（若输入为 ``str`` 或 ``int`` ，则会转化为datetime.time对象）
 
+    .. warning::
+        ``start_time`` 与 ``end_time`` 均为 ``datetime.time`` 对象，即使输入为（合法的） ``str`` （针对时间文字） 或 ``int``  （针对一天中的秒数）。
+
     Examples:
-        >>> l = Lesson(subject=Subject(name='语文', simplified_name='语', teacher='张三'), \
-                       start_time="08:00:00", end_time="08:45:00")
-        >>> l.subject.name
+        >>> l = Lesson(subject='语文', start_time="08:00:00", end_time="08:45:00")
+        >>> l.subject
         '语文'
         >>> l.start_time
         datetime.time(8, 0)
         >>> l.end_time
         datetime.time(8, 45)
     """
-    subject: Subject
+    subject: str
     start_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
     end_time: Annotated[datetime.time, BeforeValidator(utils.ensure_time)]
 
