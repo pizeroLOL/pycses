@@ -42,7 +42,6 @@ def week_num(start_day: datetime.date, day: datetime.date) -> int:
         8
     """
     res = (day - start_day).days // 7 + 1
-    log.debug(f"Calling week_num({start_day}, {day}) -> {res}")
     return res
 
 
@@ -80,7 +79,6 @@ def ensure_time(any_time: str | int | datetime.time) -> datetime.time:
         log.error(f"Unknown time type: {type(any_time)}, raising an error...")
         raise ValueError(f"Invalid time value for CSES format: {any_time}")
 
-    log.debug(f"Time validation & conversion: {any_time!r} (type: {type(any_time)}) -> {res!r}")
     return res
 
 
