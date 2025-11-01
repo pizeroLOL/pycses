@@ -124,7 +124,7 @@ class CSES:
                         sort_keys=False,
                         allow_unicode=True,
                         indent=2,
-                        Dumper=utils.NoAliasDumper)
+                        Dumper=utils.CustomizeDumper)
         log.debug(f"Generated YAML: {repr_(res)}")
         return res
 
