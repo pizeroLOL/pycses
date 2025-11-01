@@ -82,8 +82,7 @@ class SingleDaySchedule(BaseModel):
         weeks (WeekType): 周次类型，指定课程适用于哪些周次
 
     Examples:
-        >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
-                                  simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
+        >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject='语文', start_time=datetime.time(8, 0, 0), \
                                   end_time=datetime.time(8, 45, 0))], name='星期一', weeks='all')
         >>> s.enable_day
         1
@@ -108,8 +107,7 @@ class SingleDaySchedule(BaseModel):
             bool: 如果课程在指定周上启用，则返回 True；否则返回 False
 
         Examples:
-            >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
-                                      simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
+            >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject='语文', start_time=datetime.time(8, 0, 0), \
                                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd')
             >>> s.is_enabled_on_week(3)
             True
@@ -136,8 +134,7 @@ class SingleDaySchedule(BaseModel):
             bool: 如果课程在指定日期上启用，则返回 True；否则返回 False
 
         Examples:
-            >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文', \
-                                      simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0), \
+            >>> s = SingleDaySchedule(enable_day=1, classes=[Lesson(subject='语文', start_time=datetime.time(8, 0, 0), \
                                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd')
             >>> s.is_enabled_on_day(datetime.date(2025, 9, 1), datetime.date(2025, 9, 4))
             True
@@ -160,11 +157,9 @@ class Schedule(UserList[SingleDaySchedule]):
 
     Examples:
         >>> s = Schedule([
-        ...     SingleDaySchedule(enable_day=1, classes=[Lesson(subject=Subject(name='语文',
-        ...                       simplified_name='语', teacher='张三'), start_time=datetime.time(8, 0, 0),
+        ...     SingleDaySchedule(enable_day=1, classes=[Lesson(subject='语文', start_time=datetime.time(8, 0, 0),
         ...                       end_time=datetime.time(8, 45, 0))], name='星期一', weeks='odd'),
-        ...     SingleDaySchedule(enable_day=2, classes=[Lesson(subject=Subject(name='数学',
-        ...                       simplified_name='数', teacher='李四'), start_time=datetime.time(9, 0, 0),
+        ...     SingleDaySchedule(enable_day=2, classes=[Lesson(subject='数学', start_time=datetime.time(9, 0, 0),
         ...                       end_time=datetime.time(9, 45, 0))], name='星期二', weeks='even')
         ... ])
         >>> s[1].enable_day
@@ -176,4 +171,7 @@ class Schedule(UserList[SingleDaySchedule]):
 
     @override
     def __getitem__(self, index: int) -> SingleDaySchedule:
+        if index < 1 or index > 7:
+            utils.log.warning(f'Illegal index {utils.repr_(index)} calling {self.__class__.__qualname__}.__getitem__')
+            raise IndexError(f'Index {index} out of range [1, 7]')
         return self.data[index - 1]

@@ -151,7 +151,7 @@ class CSES:
         return {
             'version': self.version,
             'subjects': [subject.model_dump() for subject in self.subjects.values()],
-            'schedules': [schedule.model_dump() for schedule in self.schedules],
+            'schedules': [schedule.model_dump() for schedule in self.schedules.data],
         }
 
     def __eq__(self, other):
