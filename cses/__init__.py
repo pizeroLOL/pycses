@@ -124,7 +124,7 @@ class CSES:
                         sort_keys=False,
                         allow_unicode=True,
                         indent=2,
-                        Dumper=utils.NoAliasDumper)
+                        Dumper=utils.CustomizeDumper)
         log.debug(f"Generated YAML: {repr_(res)}")
         return res
 
@@ -151,7 +151,7 @@ class CSES:
         return {
             'version': self.version,
             'subjects': [subject.model_dump() for subject in self.subjects.values()],
-            'schedules': [schedule.model_dump() for schedule in self.schedules],
+            'schedules': [schedule.model_dump() for schedule in self.schedules.data],
         }
 
     def __eq__(self, other):

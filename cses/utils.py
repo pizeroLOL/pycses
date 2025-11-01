@@ -97,7 +97,7 @@ def serialize_time(dumper: yaml.representer.BaseRepresenter, any_time: datetime.
     return dumper.represent_scalar('tag:yaml.org,2002:str', res)
 
 
-class NoAliasDumper(yaml.Dumper):
+class CustomizeDumper(yaml.Dumper):
     """
     禁用PyYAML的别名功能，确保每个对象都被序列化。这样就不会出现 ``&id001`` 等类似的引用。
     """
